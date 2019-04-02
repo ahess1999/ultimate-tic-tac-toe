@@ -28,11 +28,11 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <summary>
         /// Stores the current game position
         /// </summary>
-        private UltimateBoard uxBoard = new UltimateBoard();
+        private UltimateBoard _board = new UltimateBoard();
         /// <summary>
         /// Stores a portion of the game tree
         /// </summary>
-        private GameTreeNode uxStatus = new GameTreeNode();
+        private GameTreeNode _status = new GameTreeNode();
         /// <summary>
         /// Stores the symbol "X" for computer use
         /// </summary>

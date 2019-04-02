@@ -21,7 +21,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <summary>
         /// Keeps track of the number of plays to the board
         /// </summary>
-        private int _numOfPlays;
+        private int _numberOfPlays;
         /// <summary>
         /// Keeps track of how many times each of the two players has played on each of the three rows
         /// </summary>
@@ -29,15 +29,15 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <summary>
         /// Keeps track of how many times each of the two players have played on each of the three columns
         /// </summary>
-        private int[][] _numberOnColumn;
+        private int[][] _numberOnColumn = new int[3][];
         /// <summary>
         /// Keeps track of how many times each of the two players has played to the major diagonal
         /// </summary>
-        private int[,] _numOnMajorDiagonal;
+        private int[] _numOnMajorDiagonal = new int[2];
         /// <summary>
         /// Keeps track of how many times each of the two players has played to the minor diagonal
         /// </summary>
-        private int[,] _numOnMinorDiagonal;
+        private int[] _numOnMinorDiagonal = new int[2];
         /// <summary>
         /// Tells whether one of the players has won
         /// </summary>
@@ -51,7 +51,19 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// </summary>
         public TicTacToeBoard()
         {
-            
+            for(int i = 0; i < _board.GetLength(0); i++)
+            {
+                for(int j = 0; j < _board.GetLength(1); j++)
+                {
+                    _board[i, j] = Player.None;
+                }
+            }
+            _numberOnColumn[0] = new int[2];
+            _numberOnColumn[1] = new int[2];
+            _numberOnColumn[2] = new int[2];
+            _numberOnRow[0] = new int[2];
+            _numberOnRow[1] = new int[2];
+            _numberOnRow[2] = new int[2];
         }
         /// <summary>
         /// Second constructor, used to construct a copy of the board
@@ -59,7 +71,17 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <param name="t">The board that is being copied</param>
         public TicTacToeBoard(TicTacToeBoard t)
         {
-
+            _numberOfPlays = t._numberOfPlays;
+            Array.Copy(t._board, _board, _board.Length);
+            for(int i = 0; i < 3; i++)
+            {
+                _numberOnColumn[i] = (int[])(t._numberOnColumn[i].Clone());
+                _numberOnRow[i] = (int[])(t._numberOnRow[i].Clone());
+            }
+            t._numOnMajorDiagonal.CopyTo(_numOnMajorDiagonal, 0);
+            t._numOnMinorDiagonal.CopyTo(_numOnMinorDiagonal, 0);
+            IsWon = t.IsWon;
+            IsOver = t.IsOver;
         }
         /// <summary>
         /// Finds and adds empty locations on the board to a list, essentially getting available plays for the players
@@ -69,15 +91,30 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <param name="column">The column number of the empty location</param>
         public void GetAvailablePlays(List<(int, int, int, int)> x, int row, int column)
         {
-
+            for(int i = 0; i < _board.GetLength(0); i++)
+            {
+                for(int j = 0; j < _board.GetLength(1); j++)
+                {
+                    if(_board[i,j] == Player.None)
+                    {
+                        x.Add((row, column, i, j));
+                    }
+                }
+            }
         }
         /// <summary>
         /// Updates the properties to indicate that the game is over and won
         /// </summary>
         /// <param name="numOfPlays">Number of plays each player has made to some path</param>
-        private void PlayTo(int[,] numOfPlays)
+        /// <param name="p">Player who is playing to the path</param>
+        private void PlayTo(int[] numOfPlays, Player p)
         {
-
+            numOfPlays[(int)(p)]++;
+            if(numOfPlays[(int)(p)] == 3)
+            {
+                IsOver = true;
+                IsWon = true;
+            }
         }
         /// <summary>
         /// Updates the 2D array by placing the player at the row and column and increments number of plays
@@ -88,7 +125,25 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <param name="column">The column the player is attempting to play on</param>
         public void Play(Player p, int row, int column)
         {
-
+            _board[row, column] = p;
+            _numberOfPlays++;
+            int sum = row + column;
+            if (_numberOfPlays == 9)
+            {
+                IsOver = true;
+            }
+            else {
+                PlayTo(_numberOnRow[row], p);
+                PlayTo(_numberOnColumn[row], p);
+                if (row == column)
+                {
+                    PlayTo(_numOnMajorDiagonal, p);
+                }
+                if (sum == 2)
+                {
+                    PlayTo(_numOnMinorDiagonal, p);
+                }
+            }
         }
     }
 }
