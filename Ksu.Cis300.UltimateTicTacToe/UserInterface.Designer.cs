@@ -57,6 +57,7 @@
             this.Controls.Add(this.uxBoard);
             this.Name = "UserInterface";
             this.Text = "Ultimate Tic Tac Toe";
+            this.Load += new System.EventHandler(this.UserInterface_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
 

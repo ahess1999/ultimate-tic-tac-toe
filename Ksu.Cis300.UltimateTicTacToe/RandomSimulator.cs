@@ -12,7 +12,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
     /// <summary>
     /// Does random simulation for the game based on board position
     /// </summary>
-    static class RandomSimulator
+    public static class RandomSimulator
     {
         /// <summary>
         /// Stores the random number generator

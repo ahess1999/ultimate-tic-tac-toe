@@ -12,7 +12,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
     /// <summary>
     /// Stores the play that leads to this node to simulate a game from the current board position
     /// </summary>
-    class GameTreeNode
+    public class GameTreeNode
     {
         /// <summary>
         /// Used to simulate a game from the current node
@@ -58,7 +58,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
         {
             _score += f;
             _simulations++;
-            return _score;
+            return f;
         }
         /// <summary>
         /// Gets the specific child needed for the simulation
@@ -111,10 +111,9 @@ namespace Ksu.Cis300.UltimateTicTacToe
         {
             if(_simulations == 0)
             {
-                float f = RandomSimulator.Simulate(b);
-                return UpdateScore(f);
+                return UpdateScore(RandomSimulator.Simulate(b));
             }
-            else if (b.IsOver == true)
+            else if (b.IsOver)
             {
                 if (b.IsWon)
                 {
@@ -133,7 +132,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
                 }
                 GameTreeNode temp = GetChildForSimulation();
                 b.Play(temp.Play);
-                return UpdateScore(1 - Simulate(b));
+                return UpdateScore(1 - temp.Simulate(b));
             }
         }
         /// <summary>
@@ -150,10 +149,9 @@ namespace Ksu.Cis300.UltimateTicTacToe
                 {
                     max = _children[i]._simulations;
                     temp = _children[i];
-                    return temp;
                 }
             }
-            return null;
+            return temp;
         }
         /// <summary>
         /// Gives the node corresponding to the play

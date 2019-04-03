@@ -12,7 +12,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
     /// <summary>
     /// Represents an ultimate tictactoeboard, or a 9x9 board
     /// </summary>
-    class UltimateBoard
+    public class UltimateBoard
     {
         /// <summary>
         /// Contains the smaller boards
@@ -61,7 +61,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
         {
             for (int i = 0; i < 3; i++)
             {
-                for(int j = 0; j < 3; i++)
+                for(int j = 0; j < 3; j++)
                 {
                     _boards[i, j] = new TicTacToeBoard();
                 }
@@ -75,10 +75,9 @@ namespace Ksu.Cis300.UltimateTicTacToe
         {
             for (int i = 0; i < 3; i++)
             {
-                for (int j = 0; j < 3; i++)
+                for (int j = 0; j < 3; j++)
                 {
-                    TicTacToeBoard temp = new TicTacToeBoard(b._boards[i, j]);
-                    _boards[i, j] = temp;
+                    _boards[i, j] = new TicTacToeBoard(b._boards[i, j]);
                 }
             }
             _summaryBoard = new TicTacToeBoard(b._summaryBoard);
@@ -92,27 +91,27 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <returns>The list of available plays</returns>
         public List<(int, int, int, int)> GetAvailablePlays()
         {
-            List<(int, int, int, int)> x = new List<(int, int, int, int)>();
-            if(_isNewGame == false && !_boards[_lastPlay.Item3, _lastPlay.Item4].IsOver)
+            if(_isNewGame || _boards[_lastPlay.Item3, _lastPlay.Item4].IsOver)
             {
-                int row = _lastPlay.Item3;
-                int column = _lastPlay.Item4;
-                _boards[row, column].GetAvailablePlays(x, row, column);
-            }
-            else
-            {
-                for(int i = 0; i < _boards.Length; i++)
+                List<(int, int, int, int)> x = new List<(int, int, int, int)>();
+                for (int i = 0; i < 3; i++)
                 {
-                    for(int j = 0; j < 3; j++)
+                    for (int j = 0; j < 3; j++)
                     {
-                        if(!_boards[i, j].IsOver)
+                        if (!_boards[i, j].IsOver)
                         {
                             _boards[i, j].GetAvailablePlays(x, i, j);
                         }
                     }
                 }
+                return x;
             }
-            return x;
+            else
+            {
+                List<(int, int, int, int)> x = new List<(int, int, int, int)>();
+                _boards[_lastPlay.Item3, _lastPlay.Item4].GetAvailablePlays(x, _lastPlay.Item3, _lastPlay.Item4);
+                return x;
+            }
         }
         /// <summary>
         /// Makes the appropriate play for the current player to the smaller board
@@ -120,16 +119,20 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <param name="loc">Location of the play to be made</param>
         public void Play((int, int, int, int) loc)
         {
+            TicTacToeBoard temp = _boards[loc.Item1, loc.Item2];
+            temp.Play(_turn, loc.Item3, loc.Item4);
+            if (temp.IsOver)
+            {
+                if (temp.IsWon)
+                {
+                    _summaryBoard.Play(_turn, loc.Item1, loc.Item2);
+                }
+                else
+                {
+                    _summaryBoard.Play(Player.Draw, loc.Item1, loc.Item2);
+                }
+            }
             _isNewGame = false;
-            _boards[loc.Item1, loc.Item2].Play(_turn, loc.Item3, loc.Item4);
-            if(_boards[loc.Item1, loc.Item2].IsOver == true)
-            {
-                _summaryBoard.Play(_turn, loc.Item1, loc.Item2);
-            }
-            else
-            {
-                _summaryBoard.Play(Player.Draw, loc.Item1, loc.Item2);
-            }
             _lastPlay = loc;
             _turn = 1 - _turn;
         }

@@ -12,7 +12,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
     /// <summary>
     /// Represents smaller tictactoe boards
     /// </summary>
-    class TicTacToeBoard
+    public class TicTacToeBoard
     {
         /// <summary>
         /// Establishes a small 3x3 tictactoe board
@@ -21,7 +21,7 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <summary>
         /// Keeps track of the number of plays to the board
         /// </summary>
-        private int _numberOfPlays;
+        private int _numberOfPlays = 0;
         /// <summary>
         /// Keeps track of how many times each of the two players has played on each of the three rows
         /// </summary>
@@ -56,14 +56,12 @@ namespace Ksu.Cis300.UltimateTicTacToe
                 for(int j = 0; j < _board.GetLength(1); j++)
                 {
                     _board[i, j] = Player.None;
+                    
                 }
+                _numberOnColumn[i] = new int[2];
+                _numberOnRow[i] = new int[2];
             }
-            _numberOnColumn[0] = new int[2];
-            _numberOnColumn[1] = new int[2];
-            _numberOnColumn[2] = new int[2];
-            _numberOnRow[0] = new int[2];
-            _numberOnRow[1] = new int[2];
-            _numberOnRow[2] = new int[2];
+            
         }
         /// <summary>
         /// Second constructor, used to construct a copy of the board
@@ -91,9 +89,9 @@ namespace Ksu.Cis300.UltimateTicTacToe
         /// <param name="column">The column number of the empty location</param>
         public void GetAvailablePlays(List<(int, int, int, int)> x, int row, int column)
         {
-            for(int i = 0; i < _board.GetLength(0); i++)
+            for(int i = 0; i < 3; i++)
             {
-                for(int j = 0; j < _board.GetLength(1); j++)
+                for(int j = 0; j < 3; j++)
                 {
                     if(_board[i,j] == Player.None)
                     {
@@ -127,19 +125,18 @@ namespace Ksu.Cis300.UltimateTicTacToe
         {
             _board[row, column] = p;
             _numberOfPlays++;
-            int sum = row + column;
             if (_numberOfPlays == 9)
             {
                 IsOver = true;
             }
-            else {
+            if (p < Player.Draw) {
                 PlayTo(_numberOnRow[row], p);
-                PlayTo(_numberOnColumn[row], p);
+                PlayTo(_numberOnColumn[column], p);
                 if (row == column)
                 {
                     PlayTo(_numOnMajorDiagonal, p);
                 }
-                if (sum == 2)
+                if ((row + column) == 2)
                 {
                     PlayTo(_numOnMinorDiagonal, p);
                 }
